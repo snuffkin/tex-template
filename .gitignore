@@ -1,0 +1,12 @@
+# LaTeX 中間ファイル (latexmkrc の $aux_dir で build/ にまとめている)
+build/
+
+# synctex はエディタの逆参照用に PDF と同じ場所 (ルート) に生成される
+*.synctex.gz
+*.synctex(busy)
+
+# エディタ・OS
+.DS_Store
+*.swp
+*~
+.vscode/

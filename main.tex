@@ -1,0 +1,144 @@
+% -*- coding: utf-8 -*-
+% コンパイル: lualatex main.tex （3回）
+\documentclass[a5paper,9pt,openany]{ltjsbook}
+
+%---------------- フォント ----------------
+\usepackage{luatexja-fontspec}
+\setmainjfont{Noto Serif CJK JP}[BoldFont=Noto Serif CJK JP Bold]
+\setsansjfont{Noto Sans CJK JP}[BoldFont=Noto Sans CJK JP Bold]
+
+%---------------- 数式・図式 ----------------
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usetikzlibrary{arrows.meta,positioning,calc,angles,quotes,decorations.markings}
+\usepackage{array,booktabs,longtable}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{enumitem}
+
+%---------------- 参考文献・索引 ----------------
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{bibliography/references.bib}
+\usepackage{makeidx}
+\makeindex
+
+%---------------- レイアウト ----------------
+\usepackage[a5paper,top=20mm,bottom=22mm,left=17mm,right=17mm]{geometry}
+\usepackage[unicode,colorlinks=true,linkcolor=BrickRed,citecolor=NavyBlue,
+            urlcolor=NavyBlue,pdftitle={（タイトルを記入してください）},
+            pdfauthor={（著者名を記入してください）}]{hyperref}
+
+%---------------- 定理環境 ----------------
+\theoremstyle{definition}
+\newtheorem{definition}{定義}[chapter]
+\newtheorem{example}[definition]{例}
+\newtheorem{remark}[definition]{注意}
+\newtheorem{exercise}[definition]{演習}
+
+\theoremstyle{plain}
+\newtheorem{theorem}[definition]{定理}
+\newtheorem{proposition}[definition]{命題}
+\newtheorem{lemma}[definition]{補題}
+\newtheorem{corollary}[definition]{系}
+\newtheorem{fact}[definition]{事実}
+
+\renewcommand{\proofname}{\textbf{証明}}
+
+%---------------- マクロ ----------------
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\CP}[1]{\mathbb{C}P^{#1}}
+\DeclareMathOperator{\Un}{U}
+\DeclareMathOperator{\SU}{SU}
+\DeclareMathOperator{\PU}{PU}
+\DeclareMathOperator{\PSU}{PSU}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\SL}{SL}
+\DeclareMathOperator{\Sp}{Sp}
+\DeclareMathOperator{\SO}{SO}
+\DeclareMathOperator{\PSp}{PSp}
+\DeclareMathOperator{\Ohm}{O}
+\DeclareMathOperator{\Cliff}{Cl}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Inn}{Inn}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\Image}{Im}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\Ad}{Ad}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\Stab}{Stab}
+\DeclareMathOperator{\Orb}{Orb}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\Ext}{Ext}
+\DeclareMathOperator{\Res}{Res}
+\DeclareMathOperator{\Ind}{Ind}
+\DeclareMathOperator{\Irr}{Irr}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\wt}{wt}
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+\newcommand{\bra}[1]{\langle #1 \rvert}
+\newcommand{\braket}[2]{\langle #1 \mid #2 \rangle}
+\newcommand{\ketbra}[2]{\lvert #1 \rangle\!\langle #2 \rvert}
+\newcommand{\Pgrp}{\mathcal{P}}
+\newcommand{\Hgrp}{\mathcal{H}}
+\newcommand{\Hilb}{\mathcal{H}}
+\newcommand{\Lie}[1]{\mathfrak{#1}}
+\newcommand{\uu}{\mathfrak{u}}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\abs}[1]{\lvert #1 \rvert}
+\newcommand{\ip}[2]{\langle #1 , #2 \rangle}
+\newcommand{\defeq}{\coloneqq}
+
+% 章冒頭の「予備知識」ボックス
+\newenvironment{prereq}{%
+  \par\vspace{0.6\baselineskip}\noindent
+  \begin{minipage}{\linewidth}
+  \small\sffamily
+  \rule{\linewidth}{0.8pt}\par\vspace{0.3\baselineskip}
+  \textbf{この章で仮定する予備知識}\par\vspace{0.2\baselineskip}
+}{%
+  \par\vspace{0.3\baselineskip}\rule{\linewidth}{0.8pt}
+  \end{minipage}\par\vspace{0.8\baselineskip}
+}
+
+%---------------- 本体 ----------------
+\title{\Huge （タイトルを記入してください）}
+\author{（著者名を記入してください）}
+\date{\today}
+
+\begin{document}
+\maketitle
+\frontmatter
+\include{src/preface}
+\tableofcontents
+
+\mainmatter
+% 章の順序はこのリストで決まる。ファイル名に章番号を含めないので、
+% 入れ替え・挿入・削除はこのリストの編集だけで完結する。
+\include{src/introduction}
+
+\appendix
+\include{src/appendix}
+
+\backmatter
+\printbibliography[title={参考文献}]
+\printindex
+
+\end{document}

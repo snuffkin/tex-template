@@ -45,6 +45,7 @@ install: ## 必要パッケージをaptで導入(root前提、デフォルトは
 		texlive-pictures \
 		texlive-luatex \
 		texlive-lang-japanese \
+		texlive-publishers \
 		latexmk \
 		biber \
 		fonts-noto-cjk

@@ -5,6 +5,9 @@ build/
 *.synctex.gz
 *.synctex(busy)
 
+# フォントが見つからないときにカレントディレクトリへ出力される
+missfont.log
+
 # エディタ・OS
 .DS_Store
 *.swp

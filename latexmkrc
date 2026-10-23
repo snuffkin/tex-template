@@ -28,7 +28,8 @@ mkdir $aux_dir unless -d $aux_dir;
 mkdir "$aux_dir/src" unless -d "$aux_dir/src";
 
 # 参考文献
-# biblatex + biber を使う場合は latexmk が自動判定するので、通常は明示設定不要
+# - biblatex + biber: latexmk が自動判定するので、通常は明示設定不要
+# - \bibliographystyle + \bibliography (従来の BibTeX): 同じく自動判定される
 # $bibtex_use = 2;
 # $biber = 'biber %O %S';
 

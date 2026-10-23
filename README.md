@@ -10,7 +10,7 @@ TeXによる執筆プロジェクト
 ├── figures/                 章ごとの図版置き場（TikZ を本文に直書きする場合は不要）
 │   └── <各章と同名のディレクトリ>/
 ├── bibliography/
-│   └── references.bib       参考文献データベース（biblatex + biber で使用）
+│   └── references.bib       参考文献データベース（biblatex + biber、従来の BibTeX でも可）
 ├── main.tex                 プリアンブルと \include の並び（章の順序はここで決まる）
 ├── main.pdf                 ビルド成果物（コミット対象）
 ├── build/                   latexmk の中間ファイル置き場（.gitignore 対象、コミットしない）
@@ -37,7 +37,8 @@ TeXによる執筆プロジェクト
 5. 索引に載せたい用語は `\index{}` で登録する（`\printindex` で巻末に出力される）。
 
 なお、本テンプレートはビルド成果物（`main.pdf`）もリポジトリにコミットする運用です。
-コミット前に `make` を実行し、PDF を最新の内容に更新してください。
+コミット前に `make rebuild` で生成物を全削除してからビルドし直し、`make check` で
+問題が無いことを確認してください（普段の執筆中は差分ビルドの `make` で十分です）。
 
 ## ビルド方法
 
@@ -46,27 +47,32 @@ TeXによる執筆プロジェクト
 - TeX Live（LuaLaTeX、`luatexja` パッケージ一式）
 - Noto Serif/Sans CJK JP フォント
 - `latexmk`
+- `pdffonts`（poppler-utils。`make check` のフォント埋め込み確認で使用。無ければその確認だけスキップ）
 
 環境が整っていない場合：
 
 ```sh
-make install
+make install SUDO=sudo   # 一般ユーザーの場合（sudo 経由で apt-get を実行）
+make install             # root で実行している場合（Docker コンテナ等）
 ```
 
-`apt` を直接呼びます。**`sudo` は使いません**。root 権限で実行するか、
-`apt` が権限なしで使える環境（Docker コンテナ等）で実行してください。
-root でない環境では、あらかじめ各自の方法で管理者権限を得てから実行してください。
+`apt-get` で必要なパッケージを導入します。デフォルトでは `sudo` を付けないため、
+一般ユーザーで実行する場合は `SUDO=sudo` を指定してください。
 
 ### ビルド
 
 ```sh
-make            # TeXをビルドし、PDFを生成
+make            # TeXをビルドし、PDFを生成(変更があった分だけ再コンパイル)
+make rebuild    # 生成物を全削除してから再ビルド
 make watch      # ソースの変更を監視して自動リビルド
 make clean      # 中間ファイルを削除(PDFは残す)
 make distclean  # PDFを含めて生成物を全削除
-make check      # 未定義参照・未定義引用・Overfull boxが無いか確認
+make check      # 未定義参照・未定義引用・Overfull box・フォント埋め込みを確認
 make help       # 利用可能なコマンド一覧を表示
 ```
+
+`make` は `latexmk` を呼ぶだけで、再ビルドが必要かどうか（`.tex`・`.bib`・図の変更）は
+latexmk が `build/main.fdb_latexmk` を使って判定します。
 
 `latexmk` を経由せず直接コンパイルする場合：
 

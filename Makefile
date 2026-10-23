@@ -13,12 +13,15 @@ APT_GET   := apt-get
 # `make install SUDO=sudo` のように上書きする。デフォルトでは sudo を使わない。
 SUDO      ?=
 
-.PHONY: all watch install clean distclean check help
+.PHONY: all rebuild watch install clean distclean check help
 
-all: distclean $(MAIN).pdf ## PDFをビルド
-
-$(MAIN).pdf: main.tex latexmkrc $(wildcard src/*.tex)
+# 再ビルドの要否は latexmk が .fdb_latexmk で判定する (.bib や図も追跡される)
+all: ## PDFをビルド(変更があった分だけ再コンパイル)
 	@TIMEFORMAT='==> ビルド時間: %R 秒'; time $(LATEXMK)
+
+rebuild: ## 生成物を全削除してからPDFをビルド
+	$(MAKE) distclean
+	$(MAKE) all
 
 watch: ## 変更監視で自動リビルド
 	$(LATEXMK) -pvc
@@ -42,12 +45,13 @@ install: ## 必要パッケージをaptで導入(root前提、デフォルトは
 		texlive-lang-japanese \
 		texlive-latex-extra \
 		texlive-fonts-extra \
+		texlive-fonts-recommended \
 		texlive-pictures \
 		texlive-luatex \
-		texlive-lang-japanese \
 		texlive-publishers \
 		latexmk \
 		biber \
+		poppler-utils \
 		fonts-noto-cjk
 	@echo "==> 導入完了。'make' でビルドできるか確認してください。"
 
@@ -60,13 +64,19 @@ distclean: ## PDFを含め生成物を全削除
 	@rm -rf build
 	@rm -f $(MAIN).pdf
 
-check: all ## 未定義参照・未定義引用・Overfull boxを確認
+check: all ## 未定義参照・未定義引用・Overfull box・フォント埋め込みを確認
 	@echo "=== 未定義参照 ==="
 	@grep -cE "Reference .* undefined" build/$(MAIN).log || true
 	@echo "=== 未定義引用 ==="
 	@grep -cE "Citation .* undefined" build/$(MAIN).log || true
 	@echo "=== Overfull \\hbox ==="
 	@grep -cE "Overfull \\\\hbox" build/$(MAIN).log || true
+	@echo "=== フォント埋め込み ==="
+	@if command -v pdffonts >/dev/null 2>&1; then \
+		if pdffonts $(MAIN).pdf | awk 'NR>2 && $$(NF-4)=="no"{f=1; print} END{exit !f}'; then \
+			echo "エラー: 上記のフォントがPDFに埋め込まれていません。"; exit 1; \
+		else echo "OK(全フォント emb yes)"; fi; \
+	else echo "pdffontsが無いためスキップしました(apt install poppler-utils)"; fi
 
 help: ## このヘルプを表示
 	@echo "使い方: make [target]"
